@@ -1,7 +1,3 @@
---[[					SCRIPT MADE BY : ALEXMIHAI04						--]]
---[[					GOOD LUCK HAVE FUN									--]]
-
-
 local Tunnel = module("vrp", "lib/Tunnel")
 local Proxy = module("vrp", "lib/Proxy")
 
