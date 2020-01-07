@@ -2,6 +2,14 @@ $(function(){
     window.addEventListener("message", function(event){
         if (event.data.pauseMenu == false) {
             $(".ui").fadeIn();
+              if (event.data.fuel != false) {
+                var fuel = event.data.fuel;
+                $(".fuel").fadeIn();
+                $("#fuel-percent").html(Math.round(fuel) + "%");
+                $("#fuel-level").css("width", fuel + "%");
+            } else {
+                $(".fuel").fadeOut();
+            }
             var health = event.data.health;
             $("#health-percent").html(Math.round(health) + "%");
             $("#health-level").css("width", health + "%");
