@@ -17,6 +17,41 @@ local arataHud = true
 local recoilHud = false
 
 
+function isCursorInPosition(x,y,width,height)
+	local sx, sy = GetActiveScreenResolution()
+  local cx, cy = GetNuiCursorPosition ( )
+  local cx, cy = (cx / sx), (cy / sy)
+  
+	local width = width / 2
+	local height = height / 2
+  
+  if (cx >= (x - width) and cx <= (x + width)) and (cy >= (y - height) and cy <= (y + height)) then
+	  return true
+  else
+	  return false
+  end
+end
+
+
+function showToolTip(text, font, size)
+	local sx, sy = GetActiveScreenResolution()
+	local cx, cy = GetNuiCursorPosition()
+	local cx, cy = ( cx / sx ) + 0.008, ( cy / sy ) + 0.027
+
+	SetTextScale(size, size)
+	SetTextFont(font)
+	SetTextProportional(1)
+	SetTextColour(255, 255, 255, 255)
+	SetTextDropshadow(0, 0, 0, 0, 255)
+	SetTextEdge(0, 0, 0, 0, 255)
+	SetTextEntry("STRING")
+	SetTextCentre(1)
+	SetTextOutline()
+	AddTextComponentString(text)
+	DrawText(cx, cy + 0.007)
+end
+
+
 function drawScreenText(x,y ,width,height,scale, text, r,g,b,a, outline, font, center)
     SetTextFont(font)
     SetTextProportional(0)
@@ -41,7 +76,7 @@ Citizen.CreateThread(function()
 	end
 end)
 
-discordText = "Discord Fantasy"
+discordText = "Discord Link"
 ipText = "I.P Server"
 
 isCursor = false
@@ -79,12 +114,12 @@ Citizen.CreateThread(function()
 			DisableControlAction(0, 2, true)
 			
 			if(arataHud)then
-				if(vRP.isCursorInPosition({0.792, 0.02, 0.02, 0.03}))then
+				if(isCursorInPosition(0.792, 0.02, 0.02, 0.03))then
 					SetCursorSprite(5)
 					if(VeziNumeleTau)then
-						vRP.showToolTip({"Ascunde numele jucatorilor"})
+						showToolTip("Ascunde numele jucatorilor")
 					else
-						vRP.showToolTip({"Arata numele jucatorilor"})
+						showToolTip("Arata numele jucatorilor")
 					end
 					if(IsDisabledControlJustPressed(0, 24))then
 						VeziNumeleTau = not VeziNumeleTau
@@ -92,16 +127,16 @@ Citizen.CreateThread(function()
 				elseif(vRP.isCursorInPosition({0.867,0.02, 0.02,0.03}))then
 					SetCursorSprite(5)
 					if(arataHud)then
-						vRP.showToolTip({"Ascunde HUD - UL"})
+						showToolTip("Ascunde HUD - UL")
 					else
-						vRP.showToolTip({"Arata HUD - UL"})
+						showToolTip("Arata HUD - UL")
 					end
 					if(IsDisabledControlJustPressed(0, 24))then
 						arataHud = not arataHud
 					end
-				elseif(vRP.isCursorInPosition({0.844,0.020,0.017,0.026}))then
+				elseif(isCursorInPosition(0.844,0.020,0.017,0.026))then
 					SetCursorSprite(5)
-					vRP.showToolTip({discordText})
+					showToolTip(discordText)
 					discordAlpha = 255
 					if(IsDisabledControlJustPressed(0, 24))then
 						discordText = "Invite Link Copiat!"
@@ -110,9 +145,9 @@ Citizen.CreateThread(function()
 							discordText = "Discord Fantasy"
 						end)
 					end
-				elseif(vRP.isCursorInPosition({0.820,0.020,0.017,0.026}))then
+				elseif(isCursorInPosition(0.820,0.020,0.017,0.026))then
 					SetCursorSprite(5)
-					vRP.showToolTip({ipText})
+					showToolTip(ipText)
 					ipAlpha = 255
 					if(IsDisabledControlJustPressed(0, 24))then
 						ipText = "I.P Server Copiat!"
@@ -128,9 +163,9 @@ Citizen.CreateThread(function()
 				if(vRP.isCursorInPosition({0.867,0.02,0.02,0.03}))then
 					SetCursorSprite(5)
 					if(arataHud)then
-						vRP.showToolTip({"Ascunde HUD - UL"})
+						showToolTip("Ascunde HUD - UL")
 					else
-						vRP.showToolTip({"Arata HUD - UL"})
+						showToolTip("Arata HUD - UL")
 					end
 					if(IsDisabledControlJustPressed(0, 24))then
 						arataHud = not arataHud
@@ -187,21 +222,14 @@ AddEventHandler("showOwnName", function()
 	VeziNumeleTau = not VeziNumeleTau
 end)
 
-function vRPN.getHudStatus()
-	return showHud
-end
-
-
--- function vRPN.insertUser(user_id,source,name,admin,vip,thirst,show)
--- 	playerNames[user_id] = {thePlayer = GetPlayerFromServerId(source), theName = name, showName = show, adminRank = admin, vipRank = vip, thirst = thirst}
--- end
 
 function vRPN.insertUser(user_id,source,name,permission,group)
- 	playerNames[user_id] = {thePlayer = GetPlayerFromServerId(source), theName = name, showName = show, adminRank = admin, vipRank = vip, thirst = thirst}
+    playerNames[user_id] = {thePlayer = GetPlayerFromServerId(source), theName = name}
     names[user_id] = name
     permissions[user_id] = permission
-	groups[user_id] = group
+    groups[user_id] = group
 end
+
 
 function vRPN.removeUser(user_id)
     playerNames[user_id] = nil
@@ -273,8 +301,6 @@ Citizen.CreateThread(function()
 			local theName = v.theName
 			local thePerm = v.thePerm
 			local theGroup = v.theGroup
-			local adminRank = v.adminRank
-			local vipRank = v.vipRank
             
             local ped = GetPlayerPed(thePlayer)
             local ply = GetPlayerPed(-1)
@@ -366,13 +392,3 @@ AddEventHandler("returnBasics", function (rHunger, rThirst)
     hunger = rHunger
     thirst = rThirst
 end)
-
-
-RegisterCommand("name", function(source, args, rawCommand)
-    VeziNumeleTau = true
-end, false)
-
-
-RegisterCommand("armura", function(source, args, rawCommand)
-    SetPedArmour(GetPlayerPed(-1), 100)
-end, false)
