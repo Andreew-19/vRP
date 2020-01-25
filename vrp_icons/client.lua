@@ -49,12 +49,6 @@ icons = {
 }
 
 
-icons2 = {
-	{"alcohol", "alcohol", "alcohol"}
---	{"ipIcon", "ipIcon", "ipIcon"},
-
-
-}
 
 function loadAllIcons()
 	for i, v in pairs(icons) do
@@ -63,17 +57,9 @@ function loadAllIcons()
 	end
 end
 
-function loadAllIcons2()
-	for i, v in pairs(icons2) do
-		local txd = CreateRuntimeTxd(v[1])
-		CreateRuntimeTextureFromImage(txd, v[2], "icons/"..v[3]..".ai")
-	end
-end
-
 
 Citizen.CreateThread(function()
 	loadAllIcons()
-	loadAllIcons2()
 end)
 
 function DrawImage3D(name1, name2, x, y, z, width, height, rot, r, g, b, alpha) 
